@@ -12,8 +12,8 @@ public class AreaLoader {
 	public Map<String, Area> areas;
 	public AreaLoader(SpriteLoader spriteLoader) {
 		areas = new HashMap<>();
-		Area testArea = new Area(40, 30, 16, 16);
-		Tile[][] tiles = new Tile[40][30];
+		Area testArea = new Area(32, 18, 32, 32);
+		Tile[][] tiles = new Tile[32][18];
 		Map<String, Tile> tileMap = new HashMap<>();
 		Tile greentl = new Tile(spriteLoader.spriteMap.get("greentl"));
 		Tile greentm = new Tile(spriteLoader.spriteMap.get("greentm"));

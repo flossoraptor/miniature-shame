@@ -9,11 +9,14 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import assets.Area;
+import assets.Player;
 
 public class Game extends BasicGame
 {
 	AreaLoader areaLoader;
+	SpriteLoader spriteLoader;
 	Area currentArea;
+	Player player;
 	public Game(String gamename)
 	{
 		super(gamename);
@@ -21,19 +24,30 @@ public class Game extends BasicGame
 
 	@Override
 	public void init(GameContainer gc) throws SlickException {
-		SpriteLoader spriteLoader = new SpriteLoader();
+		spriteLoader = new SpriteLoader();
 		areaLoader = new AreaLoader(spriteLoader);
 		currentArea = areaLoader.areas.get("testArea");
+		player = new Player(spriteLoader.spriteMap.get("link"), 50, 50);
 	}
 
 	@Override
-	public void update(GameContainer gc, int i) throws SlickException {}
+	public void update(GameContainer gc, int i) throws SlickException {
+		player.handleUpdate(i);
+	}
 
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException
 	{
 		currentArea.draw(g);
-		
+		player.draw(g);
+	}
+	
+	public void keyPressed(int key, char code) {
+		player.keyPressed(key, code);
+	}
+
+	public void keyReleased(int key, char code) {
+		player.keyReleased(key, code);
 	}
 
 	public static void main(String[] args)
@@ -45,7 +59,7 @@ public class Game extends BasicGame
 			
 			targetFrameRate = 60;
 			appgc = new AppGameContainer(new Game("Simple Slick Game"));
-			appgc.setDisplayMode(640, 480, false);
+			appgc.setDisplayMode(1024, 576, false);
 			appgc.setTargetFrameRate(targetFrameRate);
 			appgc.start();
 		}

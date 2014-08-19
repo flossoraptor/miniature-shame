@@ -19,7 +19,8 @@ public class SpriteLoader {
 		
 		try {
 			Image tiles = new Image("/resources/img/tiles.png");
-			SpriteSheet tileSheet = new SpriteSheet(tiles, 16, 16);
+			Image link = new Image("/resources/img/link.png");
+			SpriteSheet tileSheet = new SpriteSheet(tiles, 32, 32);
 			spriteMap.put("greentl", new Sprite(tileSheet.getSprite(0, 0)));
 			spriteMap.put("greentm", new Sprite(tileSheet.getSprite(1, 0)));
 			spriteMap.put("greentr", new Sprite(tileSheet.getSprite(2, 0)));
@@ -37,6 +38,7 @@ public class SpriteLoader {
 			spriteMap.put("treethicktr", new Sprite(tileSheet.getSprite(14, 0)));
 			spriteMap.put("tinygrass", new Sprite(tileSheet.getSprite(15, 0)));
 			spriteMap.put("greenflowers", new Sprite(new Animation(tileSheet, 16, 0, 19, 0, true, 500, true)));
+			spriteMap.put("link", new Sprite(link));
 			
 		} catch (SlickException e) {
 			System.out.println("FAILED TO LOAD RESOURCE");
