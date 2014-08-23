@@ -29,4 +29,9 @@ public class Tile extends DrawnObject{
 	public Tile(Sprite sprite) {
 		this.sprite = sprite;
 	}
+	
+	public Tile(Sprite sprite, boolean walkable) {
+		this.sprite = sprite;
+		this.walkable = walkable;
+	}
 }

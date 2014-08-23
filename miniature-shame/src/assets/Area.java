@@ -22,6 +22,16 @@ public class Area {
 		}
 	}
 	
+	public Position getTile(int x, int y) {
+		int tileX = x / tileWidth;
+		int tileY = y / tileHeight;
+		return new Position(tileX, tileY);
+	}
+	
+	public boolean isColliding(int tileX, int tileY) {
+		return !tiles[tileX][tileY].isWalkable();
+	}
+	
 	public Area(int width, int height, int tileWidth, int tileHeight) {
 		tiles = new Tile[width][height];
 		this.tileWidth = tileWidth;
