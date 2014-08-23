@@ -27,13 +27,12 @@ public class Game extends BasicGame
 		spriteLoader = new SpriteLoader();
 		areaLoader = new AreaLoader(spriteLoader);
 		currentArea = areaLoader.areas.get("testArea");
-		player = new Player(spriteLoader.spriteMap.get("link"), 0, 0);
+		player = new Player(spriteLoader.spriteMap.get("link"), 40, 40);
 	}
 
 	@Override
 	public void update(GameContainer gc, int i) throws SlickException {
-		player.handleUpdate(i);
-		System.out.println(player.isColliding(currentArea));
+		player.handleUpdate(i, currentArea);
 	}
 
 	@Override
