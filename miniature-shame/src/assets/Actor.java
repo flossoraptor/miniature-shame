@@ -82,22 +82,45 @@ public class Actor {
 		boolean colliding = false;
 		List<Rectangle> hitboxes = area.getHitboxes(area.getTile((int) hitbox.getX(), (int) hitbox.getY()).getPlusPerimeter());
 		for (Rectangle tileHitbox : hitboxes) {
+			// TODO: the method "intersects" probably uses the same collision detection calculations that are being used
+			// later to determine the magnitude of the intersection. It's probably safe and more efficient to
+			// attempt to resolve the collision without checking .intersects(hitbox) because, if there is no intersection,
+			// it would be resolved by a magnitude of 0, which does nothing.
 			if (tileHitbox.intersects(hitbox)) {
-				resolveCollision(tileHitbox);
+				resolveCollision(tileHitbox, area);
 				colliding = true;
 			}
 		}
 		return colliding;
 	}
 	
-	public void resolveCollision(Rectangle tileHitbox) {
+	public void resolveCollision(Rectangle tileHitbox, Area area) {
 		float resolveX = resolveCollisionX(tileHitbox);
 		float resolveY = resolveCollisionY(tileHitbox);
 		if (Math.abs(resolveX) < Math.abs(resolveY)) {
-			hitbox.setX(hitbox.getX() + resolveX);
+			if (!isInternalEdgeCollisionX(tileHitbox, area, resolveX)) {
+				hitbox.setX(hitbox.getX() + resolveX);
+			}
 		} else {
-			hitbox.setY(hitbox.getY() + resolveY);
+			if (!isInternalEdgeCollisionY(tileHitbox, area, resolveY)) {
+				hitbox.setY(hitbox.getY() + resolveY);
+			}
 		}
+	}
+	
+	private boolean isInternalEdgeCollisionX(Rectangle tileHitbox, Area area, float resolveX) {
+		int tileX = (int) (tileHitbox.getMinX() / area.getTileWidth() + (resolveX / Math.abs(resolveX)));
+		int tileY = (int) tileHitbox.getMinY() / area.getTileHeight();
+		// TODO: you can't check to see if the edge we are resolving our collision with is walkable
+		// if its coordinates are invalid. Will this cause the player to still get caught on edges
+		// if the edge is an "internal edge" that is shared with the border of the map?
+		return area.withinBounds(tileX, tileY) && !area.getTiles()[tileX][tileY].isWalkable();
+	}
+	
+	private boolean isInternalEdgeCollisionY(Rectangle tileHitbox, Area area, float resolveY) {
+		int tileX = (int) tileHitbox.getMinX() / area.getTileWidth();
+		int tileY = (int) (tileHitbox.getMinY() / area.getTileHeight() + + (resolveY / Math.abs(resolveY)));
+		return area.withinBounds(tileX, tileY) && !area.getTiles()[tileX][tileY].isWalkable();
 	}
 	
 	public float resolveCollisionX(Rectangle tileHitbox) {

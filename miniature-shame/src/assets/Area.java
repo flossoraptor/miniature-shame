@@ -82,7 +82,11 @@ public class Area {
 		return hitboxes;
 	}
 	
-	private boolean withinBounds(Position pos) {
-		return pos.getX() >= 0 && pos.getY() >= 0 && pos.getX() < tiles.length && pos.getY() < tiles[0].length;
+	public boolean withinBounds(Position pos) {
+		return withinBounds(pos.getX(), pos.getY());
+	}
+	
+	public boolean withinBounds(int x, int y) {
+		return x >= 0 && y >= 0 && x < tiles.length & y < tiles[0].length;
 	}
 }
