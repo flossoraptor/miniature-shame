@@ -146,4 +146,20 @@ public class Actor {
 	public boolean isColliding(Area area) {
 		return area.isColliding(hitbox);
 	}
+	
+	public Actor createNew(float x, float y) throws CloneNotSupportedException {
+		Actor newActor = new Actor();
+		newActor.walkSpeed = this.walkSpeed;
+		newActor.sprite = this.sprite;
+		newActor.setHitbox(new Rectangle(x, y, this.getHitbox().getWidth(), this.getHitbox().getHeight()));
+		return newActor;
+	}
+	
+	public Actor() {
+	}
+	
+	public Actor(Sprite sprite, Rectangle hitbox) {
+		this.sprite = sprite;
+		this.hitbox = hitbox;
+	}
 }

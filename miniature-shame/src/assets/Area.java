@@ -9,6 +9,7 @@ import org.newdawn.slick.geom.Rectangle;
 public class Area {
 	private Tile[][] tiles;
 	private int tileWidth, tileHeight;
+	private List<Actor> actors;
 
 	public Tile[][] getTiles() {
 		return tiles;
@@ -18,11 +19,23 @@ public class Area {
 		this.tiles = tiles;
 	}
 	
+	public List<Actor> getActors() {
+		return actors;
+	}
+	
+	public void setActors(List<Actor> actors) {
+		this.actors = actors;
+	}
+	
 	public void draw(Graphics g) {
 		for (int i=0; i<tiles.length; i++) {
 			for (int j=0; j<tiles[i].length; j++) {
 				tiles[i][j].draw(g, i*tileWidth, j*tileHeight);
 			}
+		}
+		
+		for (Actor actor : actors) {
+			actor.draw(g);
 		}
 	}
 	

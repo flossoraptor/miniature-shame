@@ -14,6 +14,7 @@ import assets.Player;
 public class Game extends BasicGame
 {
 	AreaLoader areaLoader;
+	ActorLoader actorLoader;
 	SpriteLoader spriteLoader;
 	Area currentArea;
 	Player player;
@@ -25,9 +26,10 @@ public class Game extends BasicGame
 	@Override
 	public void init(GameContainer gc) throws SlickException {
 		spriteLoader = new SpriteLoader();
-		areaLoader = new AreaLoader(spriteLoader);
+		actorLoader = new ActorLoader(spriteLoader);
+		areaLoader = new AreaLoader(spriteLoader, actorLoader);
 		currentArea = areaLoader.areas.get("testArea");
-		player = new Player(spriteLoader.spriteMap.get("link"), 40, 40);
+		player = new Player(spriteLoader.spriteMap.get("link"), 32, 32);
 	}
 
 	@Override

@@ -1,19 +1,25 @@
 package engine;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.io.FileReader;
 import java.io.BufferedReader;
 
+import org.newdawn.slick.geom.Rectangle;
+
+import assets.Actor;
 import assets.Area;
 import assets.Tile;
 
 public class AreaLoader {
 	public Map<String, Area> areas;
-	public AreaLoader(SpriteLoader spriteLoader) {
+	public AreaLoader(SpriteLoader spriteLoader, ActorLoader actorLoader) {
 		areas = new HashMap<>();
 		Area testArea = new Area(32, 18, 32, 32);
 		Tile[][] tiles = new Tile[32][18];
+		List<Actor> actors = new ArrayList<Actor>();
 		Map<String, Tile> tileMap = new HashMap<>();
 		Tile greentl = new Tile(spriteLoader.spriteMap.get("greentl"), true);
 		Tile greentm = new Tile(spriteLoader.spriteMap.get("greentm"), true);
@@ -53,20 +59,32 @@ public class AreaLoader {
 		
 		try(BufferedReader in = new BufferedReader(new FileReader("resources/area/testareaexport.txt"))){
 		    String line;
+		    boolean actorLayer = false;
 		    int xRead, yRead = 0;
 		    while ( (line=in.readLine()) != null) 
 		    {
-		    	xRead = 0;
-		        String[] values = line.split(",");
-		        for(String v:values)
-		        {
-		        	if (!v.equalsIgnoreCase(""))
-		        	{
-		        		tiles[xRead][yRead] = tileMap.get(v);
-		        		xRead++;
-		        	}
-		        }
-		        yRead++;
+		    	if (line.equals("-")) {
+		    		actorLayer = true;
+		    		yRead = 0;
+		    	} else {
+			    	xRead = 0;
+			        String[] values = line.split(",");
+			        for(String v:values)
+			        {
+			        	if (!v.equalsIgnoreCase(""))
+			        	{
+			        		if (actorLayer == false) {
+			        			tiles[xRead][yRead] = tileMap.get(v);
+			        		} else {
+			        			if (!v.equals("0")) {
+			        				actors.add(actorLoader.actorMap.get(v).createNew(xRead * 32, yRead * 32));
+			        			}
+			        		}
+			        		xRead++;
+			        	}
+			        }
+			        yRead++;
+		    	}
 		    }
 		} catch (Exception e) 
 		{
@@ -74,6 +92,7 @@ public class AreaLoader {
 		}
 		
 		testArea.setTiles(tiles);
+		testArea.setActors(actors);
 		areas.put("testArea", testArea);
 	}
 }

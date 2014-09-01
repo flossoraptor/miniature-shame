@@ -14,7 +14,7 @@ public class Player extends Actor {
 		setHitbox(new Rectangle(x, y, 32, 32));
 		getHitbox().setX(x);
 		getHitbox().setY(y);
-		setSpeed(2f);
+		setWalkSpeed(2.2f);
 		flags = new HashMap<>();
 		flags.put("walkingUp", false);
 		flags.put("walkingDown", false);
@@ -27,6 +27,10 @@ public class Player extends Actor {
 		// TODO: Consider making a list of all possible flags and iterating over that
 		Boolean isWalking = false;
 		// TODO: first check to see if player is currently under control or not
+		
+		// set the speed we will move to the appropriate value: in this case, assume we are under control, so you will only
+		// move as fast as you can walk
+		setSpeed(getWalkSpeed());
 		setxComp(0f);
 		setyComp(0f);
 		if (flags.get("walkingUp")) {
