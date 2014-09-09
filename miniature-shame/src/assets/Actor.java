@@ -1,5 +1,6 @@
 package assets;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.newdawn.slick.Graphics;
@@ -9,6 +10,7 @@ public class Actor {
 	private float xComp, yComp, speed, walkSpeed;
 	private Sprite sprite;
 	private Rectangle hitbox;
+	private State currentState;
 	
 	public float getxComp() {
 		return xComp;
@@ -49,6 +51,12 @@ public class Actor {
 		this.hitbox = hitbox;
 	}
 	
+	public State getCurrentState() {
+		return currentState;
+	}
+	public void setCurrentState(State currentState) {
+		this.currentState = currentState;
+	}
 	public void draw(Graphics g) {
 		sprite.draw(g, hitbox.getMinX(), hitbox.getMinY());
 	}
@@ -78,6 +86,30 @@ public class Actor {
 		hitbox.setY(hitbox.getY() + getyComp());
 	}
 	
+	public List<Position> damageCollision(List<Actor> actors) {
+		List<Position> positions = new ArrayList<>();
+		
+		for (Actor actor : actors) {
+			positions.add(damageCollision(actor));
+		}
+		
+		return positions;
+	}
+	
+	public void flyBack(Position position) {
+		this.currentState = new State(10, 150f, position, false);
+	}
+	
+	public Position damageCollision(Actor actor) {
+		Rectangle actorHitbox = actor.getHitbox();
+		if (actorHitbox.intersects(hitbox)) {
+			System.out.println("actor on actor collision found");
+			return new Position((int) (hitbox.getCenterX() - actorHitbox.getCenterX()), (int) (hitbox.getCenterY() - actorHitbox.getCenterY()));
+		} else {
+			return null;
+		}
+	}
+	
 	public boolean resolveCollisions(Area area) {
 		boolean colliding = false;
 		List<Rectangle> hitboxes = area.getHitboxes(area.getTile((int) hitbox.getX(), (int) hitbox.getY()).getPlusPerimeter());
@@ -87,11 +119,27 @@ public class Actor {
 			// attempt to resolve the collision without checking .intersects(hitbox) because, if there is no intersection,
 			// it would be resolved by a magnitude of 0, which does nothing.
 			if (tileHitbox.intersects(hitbox)) {
+				System.out.println("area on actor collision found");
 				resolveCollision(tileHitbox, area);
 				colliding = true;
 			}
 		}
+		for (Actor actor : area.getActors()) {
+			if (actor.getHitbox().intersects(hitbox)) {
+				resolveCollision(actor.getHitbox());
+			}
+		}
 		return colliding;
+	}
+	
+	public void resolveCollision(Rectangle actorHitbox) {
+		float resolveX = resolveCollisionX(actorHitbox);
+		float resolveY = resolveCollisionY(actorHitbox);
+		if (Math.abs(resolveX) < Math.abs(resolveY)) {
+			hitbox.setX(hitbox.getX() + resolveX);
+		} else {
+			hitbox.setY(hitbox.getY() + resolveY);
+		}
 	}
 	
 	public void resolveCollision(Rectangle tileHitbox, Area area) {
@@ -147,7 +195,9 @@ public class Actor {
 		return area.isColliding(hitbox);
 	}
 	
-	public Actor createNew(float x, float y) throws CloneNotSupportedException {
+	
+	
+	public Actor createNew(float x, float y) {
 		Actor newActor = new Actor();
 		newActor.walkSpeed = this.walkSpeed;
 		newActor.sprite = this.sprite;

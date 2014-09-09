@@ -1,6 +1,7 @@
 package assets;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
@@ -20,42 +21,53 @@ public class Player extends Actor {
 		flags.put("walkingDown", false);
 		flags.put("walkingLeft", false);
 		flags.put("walkingRight", false);
+		setCurrentState(new State(1, 0, null, true));
 	}
 	
 	@Override
 	public boolean handleUpdate(int delta, Area area) {
 		// TODO: Consider making a list of all possible flags and iterating over that
 		Boolean isWalking = false;
-		// TODO: first check to see if player is currently under control or not
+
+		if (getCurrentState().getRemainingDuration() <= 0) {
+			setCurrentState(new State(1, 0, null, true));
+		}
 		
-		// set the speed we will move to the appropriate value: in this case, assume we are under control, so you will only
-		// move as fast as you can walk
-		setSpeed(getWalkSpeed());
-		setxComp(0f);
-		setyComp(0f);
-		if (flags.get("walkingUp")) {
-			this.setyComp(-1f);
-			//this.currentAnimation = animations.get("walkUp");
-			//state = "Up";
-			isWalking = true;
-		}
-		if (flags.get("walkingDown")) {
-			this.setyComp(1f);
-			//this.currentAnimation = animations.get("walkDown");
-			//state = "Down";
-			isWalking = true;
-		}
-		if (flags.get("walkingLeft")) {
-			this.setxComp(-1f);
-			//this.currentAnimation = animations.get("walkLeft");
-			//state = "Left";
-			isWalking = true;
-		}
-		if (flags.get("walkingRight")) {
-			this.setxComp(1f);
-			//this.currentAnimation = animations.get("walkRight");
-			//state = "Right";
-			isWalking = true;
+		if (getCurrentState().canMove()) {
+			// set the speed we will move to the appropriate value: in this case, we are under control, so you will only
+			// move as fast as you can walk
+			setSpeed(getWalkSpeed());
+			setxComp(0f);
+			setyComp(0f);
+			if (flags.get("walkingUp")) {
+				this.setyComp(-1f);
+				//this.currentAnimation = animations.get("walkUp");
+				//state = "Up";
+				isWalking = true;
+			}
+			if (flags.get("walkingDown")) {
+				this.setyComp(1f);
+				//this.currentAnimation = animations.get("walkDown");
+				//state = "Down";
+				isWalking = true;
+			}
+			if (flags.get("walkingLeft")) {
+				this.setxComp(-1f);
+				//this.currentAnimation = animations.get("walkLeft");
+				//state = "Left";
+				isWalking = true;
+			}
+			if (flags.get("walkingRight")) {
+				this.setxComp(1f);
+				//this.currentAnimation = animations.get("walkRight");
+				//state = "Right";
+				isWalking = true;
+			}
+		} else {
+			setSpeed(getCurrentState().getSpeed());
+			setxComp(getCurrentState().getMovementVector().getX());
+			setyComp(getCurrentState().getMovementVector().getY());
+			getCurrentState().decrementDuration();
 		}
 		
 		//if (!isWalking) {
@@ -67,6 +79,17 @@ public class Player extends Actor {
 		move();
 		
 		resolveCollisions(area);
+		
+		if (getCurrentState().canMove()) {
+			List<Position> possibleActorCollisions = damageCollision(area.getActors());
+			
+			for (Position position : possibleActorCollisions) {
+				if (position != null) {
+					flyBack(position);
+					break;
+				}
+			}
+		}
 		
 		return true;	
 	}
