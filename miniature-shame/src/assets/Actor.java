@@ -103,7 +103,6 @@ public class Actor {
 	public Position damageCollision(Actor actor) {
 		Rectangle actorHitbox = actor.getHitbox();
 		if (actorHitbox.intersects(hitbox)) {
-			System.out.println("actor on actor collision found");
 			return new Position((int) (hitbox.getCenterX() - actorHitbox.getCenterX()), (int) (hitbox.getCenterY() - actorHitbox.getCenterY()));
 		} else {
 			return null;
@@ -119,16 +118,17 @@ public class Actor {
 			// attempt to resolve the collision without checking .intersects(hitbox) because, if there is no intersection,
 			// it would be resolved by a magnitude of 0, which does nothing.
 			if (tileHitbox.intersects(hitbox)) {
-				System.out.println("area on actor collision found");
 				resolveCollision(tileHitbox, area);
 				colliding = true;
 			}
 		}
+		/*
 		for (Actor actor : area.getActors()) {
 			if (actor.getHitbox().intersects(hitbox)) {
 				resolveCollision(actor.getHitbox());
 			}
 		}
+		*/
 		return colliding;
 	}
 	

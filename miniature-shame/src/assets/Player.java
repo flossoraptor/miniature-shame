@@ -78,13 +78,18 @@ public class Player extends Actor {
 		
 		move();
 		
+		System.out.println("i'm gonna move now!! get down!! " + getHitbox().getX() + ", " + getHitbox().getY());
+		
 		resolveCollisions(area);
+		
+		System.out.println("did i move? " + getHitbox().getX() + ", " + getHitbox().getY());
 		
 		if (getCurrentState().canMove()) {
 			List<Position> possibleActorCollisions = damageCollision(area.getActors());
 			
 			for (Position position : possibleActorCollisions) {
 				if (position != null) {
+					System.out.println("fly back!!");
 					flyBack(position);
 					break;
 				}
